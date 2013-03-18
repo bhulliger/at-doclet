@@ -8,7 +8,7 @@
 	<packaging>jar</packaging>
 
 	<name>at-doclet</name>
-	<url>http://maven.apache.org</url>
+	<url>https://github.com/bhulliger</url>
 
 	<developers>
 		<developer>
@@ -17,6 +17,20 @@
 			<url>https://github.com/bhulliger</url>
 		</developer>
 	</developers>
+
+	<scm>
+		<connection>scm:git:http://github.com/bhulliger/at-doclet.git</connection>
+		<developerConnection>scm:git:http://github.com/bhulliger/at-doclet.git</developerConnection>
+		<url>https://github.com/bhulliger/at-doclet</url>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3</name>
+			<url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -119,7 +133,6 @@
 						</goals>
 					</execution>
 				</executions>
-
 			</plugin>
 		</plugins>
 	</build>
