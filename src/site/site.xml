@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/DECORATION/1.3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache.org/xsd/decoration-1.3.0.xsd"
+  name="Annotation Driven Documentation Doclet" >
+  
+  <bannerLeft>
+    <name>@doclet</name>
+    <!-- <alt>@doclet</alt> -->
+    <href>https://github.com/bhulliger/atDoclet</href>
+  </bannerLeft>
+
+  <bannerRight>
+    <name></name>
+    <alt>#bhulliger</alt>
+    <href>https://github.com/bhulliger</href>
+  </bannerRight>
+  
+
+  <publishDate position="right" format="dd.MM.yyyy" />
+  <version position="right" />
+  
+  <poweredBy>
+    <logo name="Maven" href="http://maven.apache.org/"
+          img="http://maven.apache.org/images/logos/maven-feather.png"/>
+  </poweredBy>
+
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-fluido-skin</artifactId>
+    <version>1.3.0</version>
+  </skin>
+  
+  <custom>
+    <fluidoSkin>
+      <topBarEnabled>true</topBarEnabled>
+      <sideBarEnabled>true</sideBarEnabled>
+    </fluidoSkin>
+  </custom>
+
+  <body>
+    <head/>
+    
+    <menu name="Overview">
+    	<item name="Configuration" href="configuration.html" />
+    	<item name="Usage" href="usage.html" />
+    	<item name="Example" href="example.html" />
+    	<item name="FAQ" href="faq.html" />
+    </menu>
+    
+    
+    <menu ref="reports" />
+    <footer/>
+  </body>
+
+</project>

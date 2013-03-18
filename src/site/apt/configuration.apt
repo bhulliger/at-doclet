@@ -1,0 +1,106 @@
+            ------
+            (at)-Doclet - Configuration
+            ------
+            Brigitte Hulliger
+            ------
+             12.03.2013
+             
+Configuration of pom.xml
+
+%{toc|section=1|fromDepth=2|toDepth=4}
+
+* Generation of documentation
+
+  To use (at)-Doclet in a Maven project, you have to add the maven-javadoc-plugin to your <<<pom.xml>>> File and configure it to use the new doclet:
+  
+---
+<build>
+	<plugins>
+	...
+	
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-javadoc-plugin</artifactId>
+			<version>2.9</version>
+			<executions>
+				<execution>
+					<phase>pre-site</phase>
+					<goals>
+						<goal>javadoc</goal>
+						<goal>test-javadoc</goal>
+					</goals>
+				</execution>
+			</executions>
+		
+			<configuration>
+				<doclet>ch.puzzle.util.AnnotationDrivenDoclet</doclet>
+				<docletArtifact>
+					<groupId>ch.puzzle</groupId>
+					<artifactId>at-utils</artifactId>
+					<version>1.0</version>
+				</docletArtifact>
+		
+				<additionalparam>
+					-output ${basedir}/path/to/output/folder/for/generated/files
+					-annotation classpath.to.annotation ${basedir}/path/to/template/file
+					-resourcesDir /path/to/maven/site/resources/if/not/default
+					...
+				</additionalparam>
+			</configuration>
+		</plugin>
+		
+		...
+	</plugins>				
+</build>
+---
+
+** execution section
+
+  The execution of the doclet has to happen in the <<<pre-site>>> phase of the <<<site>>> lifecycle of maven, since it generates files that are used in the <<<site>>> phase.
+
+  Per default, only the source directory is scanned for Java types with the provided annotations. 
+  If you want to scan the test-directory as well, you have to add the <<<test-javadoc>>> directory to the goal section. of the plugin.
+
+** configuration section
+
+  Per default, the standard javadoc doclet is used for the generation of javadoc. To use the (at)-doclet, you have to add the <<<doclet>>> param in the <<<configuration>>> section, as described in the example pom.xml above. 
+
+*** additional params section
+
+  The section with the additional params is needed to configure the used annotations and the output directory, where to put the generated files:
+  
+  * <<<-output [path]>>>: the (relative) path to the directory, where to put the generated files (.apt)-Files. All generated files will be put there.
+  
+  * <<<-annotation [annotation] [template]>>>: The classpath to the annotation to scan for and the path to the template that should be used for Java types with this annotation.
+  
+  * <<<-resourcesDir [path]>>>: The path to the Maven Site Resources (such as Images or Screencasts), if your project does not use the default path (<<<src/site/resources/>>>).
+  
+* Clean-Up
+
+  To delete the generated files in the <<<clean>>> lifecycle of maven, you should configure the <<<maven-clean-plugin>>> plugin as follows:
+  
+---
+<build>
+	<plugins>
+		...
+		<plugin>
+			<artifactId>maven-clean-plugin</artifactId>
+			<version>2.5</version>
+			<configuration>
+				<filesets>
+					<fileset>
+						<directory>path/to/output/dir</directory>
+						<includes>
+							<include>*/**</include>
+						</includes>
+					</fileset>
+				</filesets>
+			</configuration>
+		</plugin>
+		...
+	</plugins>
+</build>
+--- 
+
+  The important part is the directory in the fileset section: Add the output directory as configured in the javadoc plugin (additional params) here.
+

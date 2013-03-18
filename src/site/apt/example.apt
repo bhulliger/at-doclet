@@ -1,0 +1,191 @@
+            ------
+            (at)-Doclet - Example
+            ------
+            Brigitte Hulliger
+            ------
+             12.03.2013
+             
+Example
+
+%{toc|section=1|fromDepth=2|toDepth=4}
+  
+
+* Annotation
+  
+---
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target({ ElementType.TYPE })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface UseCase {
+
+	public String id();
+	public String name();
+}
+---
+  
+* Template
+
+---
+			------
+            ${id}
+            ------
+            ${author}
+            ------
+            ${since}
+
+${id} / ${name}
+
+  (Author: ${author}, Version: ${version}, Letztes Update: ${since})
+
+* Description
+  
+  ${abstract}
+  
+* Use Case Definition
+  
+~~{table}
+*-------------------------------+--------------------------------+
+ <<ID>>   						| ${id}        
+*-------------------------------+--------------------------------+
+ <<Name>> 						| ${name}
+*-------------------------------+--------------------------------+
+ <<Goal>> 						| ${goal}
+*-------------------------------+--------------------------------+
+ <<Actor/s>> 					| ${actors}
+*-------------------------------+--------------------------------+
+ <<Status>> 					| ${status}
+*-------------------------------+--------------------------------+
+ <<Preconditions>>				| ${preconditions}
+*-------------------------------+--------------------------------+
+ <<Postconditions>>				| ${postconditions}
+*-------------------------------+--------------------------------+
+ <<Trigger>> 					| ${trigger}
+*-------------------------------+--------------------------------+
+ <<Normal Flow>>		 		| ${normalFlow}
+*-------------------------------+--------------------------------+
+ <<Alternative Flow>>			| ${alternativeFlow}
+*-------------------------------+--------------------------------+
+ <<Comments>>			 		| ${useCaseComment}
+*-------------------------------+--------------------------------+
+ <<History>> 					| ${useCaseHistory}
+*-------------------------------+--------------------------------+
+~~{/table}
+
+* Screencast
+~~{screencast:src/resources/demo.ogg}
+
+* Screenshots
+~~{images:src/resources/images/}
+
+---
+  
+* Annotated Java Type
+  
+---
+import ch.puzzle.ndbjs.util.doc.UseCase;
+
+/**
+ * @author Brigitte Hulliger, <hulliger@puzzle.ch>
+ * 
+ * @version 1.0
+ * @since 18.02.2013
+ * 
+ * @abstract A user logs in to the application with his provided credentials.
+ * 
+ * @id UC-000
+ * @name Login
+ * 
+ * @goal A valid user is logged in.
+ * @actors a user of the application
+ * @status Done
+ * 
+ * @preconditions -
+ * @postconditions the user is logged in.
+ * 
+ * @normalFlow
+ *             [[1]] The user enters his/her credentials on the login page .
+ * 
+ *             [[2]] The user submits his credentials with a click on the "Login" Button.
+ * 
+ *             [[3]] The system checks the provided credentials and redirects the logged in user to the dashboard page. 
+ * 
+ * @alternativeFlow If the entered credentials are wrong or the user does not have an account, the system displays a error message on the login page.
+ * 
+ * @useCaseComment -
+ * 
+ * @useCaseHistory 18.02.2013 - 1.0 - initial version - Brigitte Hulliger
+ */
+@UseCase(id = "UC-000", name = "Login")
+public class Login {
+
+	/** your code here */
+	
+}
+
+---
+  
+* Generated Output
+  
+  The output of the above code is saved in the configured output directory and looks like this:
+  
+---
+			------
+            UC-000 / Login
+            ------
+            Brigitte Hulliger, <hulliger@puzzle.ch>
+            ------
+            18.02.2013
+
+UC-000 / Login
+
+  (Author: Brigitte Hulliger, <hulliger@puzzle.ch>, Version: 1.0, Letztes Update: 18.02.2013)
+
+* Description
+  
+  A user logs in to the application with his provided credentials.
+  
+* Use Case Definition
+  
+~~{table}
+*-------------------------------+--------------------------------+
+ <<ID>>   						| UC-000        
+*-------------------------------+--------------------------------+
+ <<Name>> 						| Login
+*-------------------------------+--------------------------------+
+ <<Goal>> 						| A valid user is logged in.
+*-------------------------------+--------------------------------+
+ <<Actor/s>> 					| a user of the application
+*-------------------------------+--------------------------------+
+ <<Status>> 					| Done
+*-------------------------------+--------------------------------+
+ <<Preconditions>>				| -
+*-------------------------------+--------------------------------+
+ <<Postconditions>>				| the user is logged in.
+*-------------------------------+--------------------------------+
+ <<Trigger>> 					| 
+*-------------------------------+--------------------------------+
+ <<Normal Flow>>		 		| [[1]] The user enters his/her credentials on the login page . [[2]] The user submits his credentials with a click on the "Login" Button. [[3]] The system checks the provided credentials and redirects the logged in user to the dashboard page.
+*-------------------------------+--------------------------------+
+ <<Alternative Flow>>			| If the entered credentials are wrong or the user does not have an account, the system displays a error message on the login page.
+*-------------------------------+--------------------------------+
+ <<Comments>>			 		| -
+*-------------------------------+--------------------------------+
+ <<History>> 					| 18.02.2013 - 1.0 - initial version - Brigitte Hulliger
+*-------------------------------+--------------------------------+
+~~{/table}
+
+
+---
+
+* Generated Site
+
+  Depending of the site descriptor of your maven site, the output after the generation may look something similar to the following:
+  
+  
+[images/demo_usecase.png]
+  
+  

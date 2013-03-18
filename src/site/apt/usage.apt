@@ -1,0 +1,49 @@
+            ------
+            (at)-Doclet - Usage
+            ------
+            Brigitte Hulliger
+            ------
+             12.03.2013
+             
+Usage of the doclet
+
+~~%{toc|section=1|fromDepth=2|toDepth=4}
+
+* Define your annotation(s)
+
+  First you have to define your annotation(s) for the documentation. (at)-doclet supports Type- and Method-Annotations. 
+  The defined annotations must have at least one attribute: <<<String id();>>>. This attribute is used for the filename of the generated output file.
+
+* Add your template(s)
+
+  Write a template file to use for the defined annotation. The template file should use the Doxia APT format from Maven. It can contain placeholders:
+
+~~* \<<<${<any placeholder}\>>>: Everything enclosed by a dollar and curly braces is considered a placeholder. The doclet replaces placeholders with data written in the Javadoc. If no Javadoc Tag with the given key could be found, the placeholder is removed in the output file.
+
+  * <<<~~\{table\}>>> and <<<~~\{/table\}>>>: Unfortunately, the support for multiline cells in the Doxia APT format is a bit tricky. Therefore, if you add tables in the template file, add these two <tags> around your table. The transformer removes all formatting from the javadoc and prints it in a single cell. If you want to keep your formatting from the javadoc, you should (at least for now) not use tables in your templates.
+  
+  * <<<~~\{images:path/to/images/directory\}>>>: you can inlcude a image tag in your template. The doclet parses the directory provided in the tag and adds all pictures in this directory to the resulting page.
+  
+  * <<<~~\{screencast:path/to/screencast\}>>>: similar to the images tag, you can add a screencast tag with a path to the video that contains the screencast. Supported are *.ogg, *.webm and *.mp4 formats. The resulting page includes the video. 
+
+* Annotate the Java Types and Methods to document
+
+  Add the defined annotations to the Java Types and Methods you want to document. You can document Types and Methods with (at)-doclet.
+
+* Add appropriate Javadoc to your types and annotations
+
+  Document your Java Code in the common Javadoc style. You can add any tag you want. If it is found in the template it will be printed in the documentation. 
+  The format of the documentation is Doxia APT, which is the <amost plain text> format of Maven. There are only a few things you should now about this format:
+  
+  * \<italic\>: Text in a single brace prints in <italic>
+  
+  * \<\<bold\>\>: Text in double braces prints in <<bold>>
+  
+  * \<\<\<monospaced\>\>\>: Text in tripple braces prints as <<<monospaced>>> text
+  
+  * New paragraphs start when you leave an empty line before writing new documentation.
+  
+  * Bullet points start with 2 spaces, a asterisk and another space.
+  
+  
+  For further information about the documentation standards, please have a look at the {{{http://maven.apache.org/doxia/references/apt-format.html}Doxia APT Documentation}}.  
