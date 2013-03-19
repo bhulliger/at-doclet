@@ -200,6 +200,8 @@ public class AnnotationDrivenDoclet {
 			String replacement = replacements.containsKey(key) ? replacements
 					.get(key) : "";
 
+			// TODO: replace javadoc links
+
 			// format text for tablecells.
 			if (insideTable) {
 				replacement = formatTextForTableCell(replacement);

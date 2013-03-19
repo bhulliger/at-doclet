@@ -3,15 +3,11 @@
  */
 package ch.puzzle.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -23,19 +19,6 @@ import com.sun.javadoc.RootDoc;
  * @author Brigitte Hulliger, <hulliger@puzzle.ch>
  */
 public class AnnotationDrivenDocletTest {
-
-	@Test
-	public void testname() throws Exception {
-		String line = "~~{screencast:screencasts/${id}}";
-
-		Map<String, String> replacements = new HashMap<>();
-		replacements.put("id", "TC-000-1");
-
-		String output = AnnotationDrivenDoclet.processScreencast(line,
-				replacements);
-
-		System.out.println(output);
-	}
 
 	/**
 	 * @throws java.lang.Exception
@@ -55,7 +38,7 @@ public class AnnotationDrivenDocletTest {
 	@Test
 	public void shouldProcessCommandLineParametersInDoclet() throws Exception {
 		// GIVEN
-		RootDoc root = Mockito.mock(RootDoc.class);
+		final RootDoc root = Mockito.mock(RootDoc.class);
 		final String[][] providedCommandLineParameters = {
 				{ "-output", "anywhere" },
 				{ "-annotation", "class1", "template1" },
@@ -68,9 +51,10 @@ public class AnnotationDrivenDocletTest {
 		AnnotationDrivenDoclet.start(root);
 
 		// THEN
-		assertEquals("anywhere", AnnotationDrivenDoclet.baseOutputDir);
-		assertEquals("anywhere/else", AnnotationDrivenDoclet.resourcesDir);
-		assertTrue(AnnotationDrivenDoclet.configuredAnnotations
+		Assert.assertEquals("anywhere", AnnotationDrivenDoclet.baseOutputDir);
+		Assert.assertEquals("anywhere/else",
+				AnnotationDrivenDoclet.resourcesDir);
+		Assert.assertTrue(AnnotationDrivenDoclet.configuredAnnotations
 				.containsKey("class1"));
 	}
 
@@ -83,7 +67,7 @@ public class AnnotationDrivenDocletTest {
 	@Ignore(value = "not yet implemented")
 	public void testProcessAnnotations() {
 		// TODO
-		fail("Not yet implemented");
+		Assert.fail("Not yet implemented");
 	}
 
 	/**
@@ -98,11 +82,11 @@ public class AnnotationDrivenDocletTest {
 		replacements.put("id", "demo");
 
 		// WHEN
-		String output = AnnotationDrivenDoclet.processLine(line, false,
+		final String output = AnnotationDrivenDoclet.processLine(line, false,
 				replacements);
 
 		// THEN
-		assertEquals(
+		Assert.assertEquals(
 				"%{snippet|verbatim=false|file=src/site/resources/generated/snippets/screencast_snippet_demo.txt}",
 				output.trim());
 	}
@@ -125,7 +109,7 @@ public class AnnotationDrivenDocletTest {
 				line, replacements);
 
 		// THEN
-		assertEquals(
+		Assert.assertEquals(
 				"%{snippet|verbatim=false|file=src/site/resources/generated/snippets/screencast_snippet_demo.txt}",
 				outputLine.trim());
 	}
@@ -148,7 +132,7 @@ public class AnnotationDrivenDocletTest {
 				line, replacements);
 
 		// THEN
-		assertEquals("n/a", outputLine.trim());
+		Assert.assertEquals("n/a", outputLine.trim());
 	}
 
 	/**
@@ -166,7 +150,7 @@ public class AnnotationDrivenDocletTest {
 				new HashMap<String, String>());
 
 		// THEN
-		assertEquals("[/images/test/duke.png]", outputLine.trim());
+		Assert.assertEquals("[/images/test/duke.png]", outputLine.trim());
 	}
 
 	/**
@@ -187,7 +171,7 @@ public class AnnotationDrivenDocletTest {
 				replacements);
 
 		// THEN
-		assertEquals("n/a", outputLine.trim());
+		Assert.assertEquals("n/a", outputLine.trim());
 	}
 
 	/**
@@ -208,7 +192,7 @@ public class AnnotationDrivenDocletTest {
 				replacements);
 
 		// THEN
-		assertTrue(outputLine.contains("duke.png"));
+		Assert.assertTrue(outputLine.contains("duke.png"));
 	}
 
 	/**
@@ -228,8 +212,8 @@ public class AnnotationDrivenDocletTest {
 				new HashMap<String, String>());
 
 		// THEN
-		assertTrue(outputLine.contains("duke.png"));
-		assertFalse(outputLine.contains("not_an_image.txt"));
+		Assert.assertTrue(outputLine.contains("duke.png"));
+		Assert.assertFalse(outputLine.contains("not_an_image.txt"));
 	}
 
 	/**
@@ -245,7 +229,7 @@ public class AnnotationDrivenDocletTest {
 		final int optionLength = AnnotationDrivenDoclet.optionLength("-output");
 
 		// THEN
-		assertEquals(2, optionLength);
+		Assert.assertEquals(2, optionLength);
 	}
 
 	/**
@@ -262,7 +246,7 @@ public class AnnotationDrivenDocletTest {
 				.optionLength("-annotation");
 
 		// THEN
-		assertEquals(3, optionLength);
+		Assert.assertEquals(3, optionLength);
 	}
 
 	/**
@@ -279,7 +263,7 @@ public class AnnotationDrivenDocletTest {
 				.optionLength("-siteResources");
 
 		// THEN
-		assertEquals(2, optionLength);
+		Assert.assertEquals(2, optionLength);
 	}
 
 	/**
@@ -296,7 +280,7 @@ public class AnnotationDrivenDocletTest {
 				.optionLength("-anythingElse");
 
 		// THEN
-		assertEquals(0, optionLength);
+		Assert.assertEquals(0, optionLength);
 	}
 
 	/**
@@ -315,7 +299,7 @@ public class AnnotationDrivenDocletTest {
 		AnnotationDrivenDoclet.processOptions(providedCommandLineParameters);
 
 		// THEN
-		fail("should have thrown an UnsupportedCommandLineParameterException.");
+		Assert.fail("should have thrown an UnsupportedCommandLineParameterException.");
 	}
 
 	/**
@@ -333,7 +317,7 @@ public class AnnotationDrivenDocletTest {
 		AnnotationDrivenDoclet.processOptions(providedCommandLineParameters);
 
 		// THEN
-		fail("should have thrown an UnsupportedCommandLineParameterException.");
+		Assert.fail("should have thrown an UnsupportedCommandLineParameterException.");
 	}
 
 	/**
@@ -352,7 +336,7 @@ public class AnnotationDrivenDocletTest {
 		AnnotationDrivenDoclet.processOptions(providedCommandLineParameters);
 
 		// THEN
-		assertEquals("anywhere", AnnotationDrivenDoclet.baseOutputDir);
+		Assert.assertEquals("anywhere", AnnotationDrivenDoclet.baseOutputDir);
 	}
 
 	/**
@@ -372,7 +356,8 @@ public class AnnotationDrivenDocletTest {
 		AnnotationDrivenDoclet.processOptions(providedCommandLineParameters);
 
 		// THEN
-		assertEquals("anywhere/else", AnnotationDrivenDoclet.resourcesDir);
+		Assert.assertEquals("anywhere/else",
+				AnnotationDrivenDoclet.resourcesDir);
 	}
 
 	/**
@@ -392,7 +377,8 @@ public class AnnotationDrivenDocletTest {
 		AnnotationDrivenDoclet.processOptions(providedCommandLineParameters);
 
 		// THEN
-		assertEquals("src/site/resources/", AnnotationDrivenDoclet.resourcesDir);
+		Assert.assertEquals("src/site/resources/",
+				AnnotationDrivenDoclet.resourcesDir);
 	}
 
 	/**
@@ -412,14 +398,15 @@ public class AnnotationDrivenDocletTest {
 		AnnotationDrivenDoclet.processOptions(providedCommandLineParameters);
 
 		// THEN
-		assertEquals(2, AnnotationDrivenDoclet.configuredAnnotations.size());
-		assertTrue(AnnotationDrivenDoclet.configuredAnnotations
+		Assert.assertEquals(2,
+				AnnotationDrivenDoclet.configuredAnnotations.size());
+		Assert.assertTrue(AnnotationDrivenDoclet.configuredAnnotations
 				.containsKey("class1"));
-		assertTrue(AnnotationDrivenDoclet.configuredAnnotations
+		Assert.assertTrue(AnnotationDrivenDoclet.configuredAnnotations
 				.containsKey("class2"));
-		assertEquals("template1",
+		Assert.assertEquals("template1",
 				AnnotationDrivenDoclet.configuredAnnotations.get("class1"));
-		assertEquals("template2",
+		Assert.assertEquals("template2",
 				AnnotationDrivenDoclet.configuredAnnotations.get("class2"));
 	}
 
@@ -441,7 +428,7 @@ public class AnnotationDrivenDocletTest {
 		AnnotationDrivenDoclet.processOptions(providedCommandLineParameters2);
 
 		// THEN
-		fail("should have thrown a MissingParameterException.");
+		Assert.fail("should have thrown a MissingParameterException.");
 	}
 
 }
