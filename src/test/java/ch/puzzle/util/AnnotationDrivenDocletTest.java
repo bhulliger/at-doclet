@@ -1,6 +1,3 @@
-/**
- * 
- */
 package ch.puzzle.util;
 
 import java.util.HashMap;
@@ -21,10 +18,10 @@ import com.sun.javadoc.RootDoc;
 public class AnnotationDrivenDocletTest {
 
 	/**
-	 * @throws java.lang.Exception
+	 * reset static fields
 	 */
 	@After
-	public void tearDown() throws Exception {
+	public void tearDown() {
 		AnnotationDrivenDoclet.configuredAnnotations = new HashMap<>();
 		AnnotationDrivenDoclet.baseOutputDir = null;
 		AnnotationDrivenDoclet.resourcesDir = "src/site/resources/";

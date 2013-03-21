@@ -1,1 +1,1 @@
-<video width="800" controls><source src="/screencasts/demo.ogg" type="video/ogg"><source src="/screencasts/demo.webm" type="video/webm"><source src="/screencasts/demo.mp4" type="video/mp4">Your Browser does not support the video tag.</video>
+<video width="800" controls><source src="/screencasts/demo.ogg" type="video/ogg"><source src="/screencasts/demo.mp4" type="video/mp4"><source src="/screencasts/demo.webm" type="video/webm">Your Browser does not support the video tag.</video>

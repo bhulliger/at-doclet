@@ -18,22 +18,24 @@ import java.util.regex.Pattern;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import lombok.extern.log4j.Log4j;
-
 import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.AnnotationDesc.ElementValuePair;
 import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.Doclet;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.RootDoc;
 import com.sun.javadoc.Tag;
 
 /**
  * @author Brigitte Hulliger, <hulliger@puzzle.ch>
- * 
  */
-@Log4j
 public class AnnotationDrivenDoclet {
 
+	/** Log4j Logger. */
+	// private static final Logger LOG = Logger
+	// .getLogger(AnnotationDrivenDoclet.class);
+
+	/** File formats that are supported for embedding videos in documentation. */
 	private static final String[] SUPPORTED_VIDEO_TYPES = { "ogg", "mp4",
 			"webm" };
 
@@ -43,14 +45,14 @@ public class AnnotationDrivenDoclet {
 	 * 
 	 * e.g. javadoc -output ~/docs
 	 */
-	protected static String baseOutputDir;
+	static String baseOutputDir;
 
 	/**
 	 * The resource directory of the project. The parameter "-resourceDir" has
 	 * to be set as parameter if does not match the maven default of
 	 * src/site/resources.
 	 */
-	protected static String resourcesDir = "src/site/resources/";
+	static String resourcesDir = "src/site/resources/";
 
 	/**
 	 * Map of configured annotations. stores which template to use for which
@@ -60,31 +62,39 @@ public class AnnotationDrivenDoclet {
 	 * e.g. javadoc -annotation ch.puzzle.example.Page
 	 * ${basedir}/src/site/apt/templates/pages.apt.template
 	 */
-	protected static Map<String, String> configuredAnnotations = new HashMap<>();
+	static Map<String, String> configuredAnnotations = new HashMap<>();
 
+	/** Regex pattern to find placeholders in template file. */
 	private static final Pattern KEY_DELIMITER = Pattern
 			.compile("\\$\\{\\w+\\}");
 
+	/** Delimiter to find tables inside the template file. */
 	private static final String TABLE_START_DELIMITER = "~~{table}";
 
+	/** Delimiter to find table ends inside the template file. */
 	private static final String TABLE_END_DELIMITER = "~~{/table}";
 
+	/** Regex pattern to find image placeholders inside the template file. */
 	private static final Pattern IMAGES_DELIMITER = Pattern
 			.compile("~~\\{images:(\\/*[\\w+\\$\\{\\}]\\/*)+\\}");
 
+	/** Regex pattern to find screencast placeholders inside the template file. */
 	private static final Pattern SCREENCAST_MATCHER = Pattern
 			.compile("~~\\{screencast:(\\/*[\\w+\\_\\-\\/])*\\$\\{\\w+\\}");
 
 	/**
 	 * @param root
+	 *            {@link RootDoc} document to start doclet generation from.
 	 * @return boolean value whether the generation was successful or not.
 	 * @throws IOException
 	 * @throws UnsupportedCommandLineParameterException
 	 * @throws MissingCommandLineParameterException
+	 * @throws FileNotFoundException
 	 */
-	public static boolean start(final RootDoc root) throws IOException,
-			UnsupportedCommandLineParameterException,
-			MissingCommandLineParameterException {
+	public static boolean start(final RootDoc root)
+			throws UnsupportedCommandLineParameterException,
+			MissingCommandLineParameterException, FileNotFoundException,
+			IOException {
 
 		/** process commandline-parameters and save them to class variables */
 		processOptions(root.options());
@@ -106,12 +116,15 @@ public class AnnotationDrivenDoclet {
 
 	/**
 	 * @param tags
+	 *            the Tags to process.
 	 * @param annotations
+	 *            the annotations to process.
 	 * @param destinationFolder
+	 *            the directory where to put the generated files.
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 */
-	protected static void processAnnotations(final Tag[] tags,
+	static void processAnnotations(final Tag[] tags,
 			final AnnotationDesc[] annotations, final String destinationFolder)
 			throws IOException, FileNotFoundException {
 		for (final AnnotationDesc annotationDesc : annotations) {
@@ -140,10 +153,10 @@ public class AnnotationDrivenDoclet {
 				file.mkdirs();
 			}
 
-			for (ElementValuePair annotationElement : annotationDesc
+			for (final ElementValuePair annotationElement : annotationDesc
 					.elementValues()) {
-				String key = annotationElement.element().name();
-				String value = annotationElement.value().toString()
+				final String key = annotationElement.element().name();
+				final String value = annotationElement.value().toString()
 						.replaceAll("\"", "");
 				replacements.put(key, value);
 			}
@@ -168,14 +181,22 @@ public class AnnotationDrivenDoclet {
 					line = processLine(line, insideTable, replacements);
 					writer.println(line);
 				}
-				writer.close();
-				reader.close();
 			}
 		}
 	}
 
-	protected static String processLine(final String line,
-			final boolean insideTable, final Map<String, String> replacements) {
+	/**
+	 * @param line
+	 *            the input line to process.
+	 * @param insideTable
+	 *            boolean value whether the current line is between a
+	 *            TABLE_START_DELIMITER and a TABLE_END_DELIMITER.
+	 * @param replacements
+	 *            map with the replacement keys found in javadoc.
+	 * @return the processed line with all replacements done.
+	 */
+	static String processLine(final String line, final boolean insideTable,
+			final Map<String, String> replacements) {
 		String toPrint = line;
 
 		// process screencast tags
@@ -221,12 +242,12 @@ public class AnnotationDrivenDoclet {
 	 *            the replacement parameters from the javadoc
 	 * @return the replacement string for the screencasts
 	 */
-	protected static String processScreencast(final String line,
+	static String processScreencast(final String line,
 			final Map<String, String> replacements) {
 		// 1. replace placeholders
 		final Matcher matcher = KEY_DELIMITER.matcher(line);
 
-		log.debug(line);
+		// LOG.debug(line);
 
 		String fileIdentifier = "";
 
@@ -240,7 +261,7 @@ public class AnnotationDrivenDoclet {
 
 		// check if screencast is available
 		boolean screencastExists = false;
-		for (String supportedVideoType : SUPPORTED_VIDEO_TYPES) {
+		for (final String supportedVideoType : SUPPORTED_VIDEO_TYPES) {
 			if (new File(resourcesDir + "screencasts/" + fileIdentifier + "."
 					+ supportedVideoType).exists()) {
 				screencastExists = true;
@@ -248,20 +269,20 @@ public class AnnotationDrivenDoclet {
 			}
 		}
 
-		StringBuilder toPrint = new StringBuilder();
+		final StringBuilder toPrint = new StringBuilder();
 
 		if (screencastExists) {
 			final StringBuilder snippet = new StringBuilder();
 			snippet.append("<video width=\"800\" controls>");
-			snippet.append("<source src=\"/screencasts/")
-					.append(fileIdentifier)
-					.append(".ogg\" type=\"video/ogg\">");
-			snippet.append("<source src=\"/screencasts/")
-					.append(fileIdentifier)
-					.append(".webm\" type=\"video/webm\">");
-			snippet.append("<source src=\"/screencasts/")
-					.append(fileIdentifier)
-					.append(".mp4\" type=\"video/mp4\">");
+
+			for (final String supportedVideoFormat : SUPPORTED_VIDEO_TYPES) {
+				snippet.append("<source src=\"/screencasts/")
+						.append(fileIdentifier).append(".")
+						.append(supportedVideoFormat)
+						.append("\" type=\"video/")
+						.append(supportedVideoFormat).append("\">");
+			}
+
 			snippet.append("Your Browser does not support the video tag.");
 			snippet.append("</video>");
 
@@ -281,7 +302,9 @@ public class AnnotationDrivenDoclet {
 					bw.write(snippet.toString());
 				}
 			} catch (final IOException e) {
-				log.error(e);
+				e.printStackTrace();
+				// FIXME
+				// LOG.error(e);
 			}
 
 			toPrint.append("\n\n%{snippet|verbatim=false|file="
@@ -299,7 +322,7 @@ public class AnnotationDrivenDoclet {
 	 *            the replacement parameters from the javadoc
 	 * @return the replacement string for the images
 	 */
-	protected static String processImages(final String line,
+	static String processImages(final String line,
 			final Map<String, String> replacements) {
 
 		// 1. replace placeholders
@@ -347,15 +370,20 @@ public class AnnotationDrivenDoclet {
 							.append(file.getPath().replace(resourcesDir, "/"))
 							.append("]");
 				} else {
-					log.debug(file.getName() + " has an unsupported filetype ["
-							+ type + "]. skipping.");
+
+					// LOG.debug(file.getName() +
+					// " has an unsupported filetype ["
+					// + type + "]. skipping.");
+					System.out.println(file.getName()
+							+ " has an unsupported filetype [" + type
+							+ "]. skipping.");
 				}
 			}
 		}
 
 		if (sb.length() == 0) {
-			sb.append("\n\n n/a"); // if no images are printed, add "n/a" to
-									// stringbuilder.
+			// if no images are printed, add "n/a" to stringbuilder.
+			sb.append("\n\n n/a");
 		}
 
 		// // 4. return apt-content
@@ -363,18 +391,26 @@ public class AnnotationDrivenDoclet {
 	}
 
 	/**
-	 * @param replacement
+	 * Removes newlines from the input String. This is used, because the
+	 * apt-format from maven brings some limitations to multiline cells inside
+	 * tables.
+	 * 
+	 * Replaces new Lines (\n), Tabs (\t) and multi whitespaces (\\s+) with a
+	 * single whitespace.
+	 * 
+	 * @param inputString
+	 *            the inputString to replace newlines
 	 * @return the formatted string usable in table cells of the apt-format
 	 */
-	private static String formatTextForTableCell(final String replacement) {
+	private static String formatTextForTableCell(final String inputString) {
 		final Matcher matcher = Pattern.compile("\\s+|\t|\n").matcher(
-				replacement);
+				inputString);
 
 		if (matcher.find()) {
 			return matcher.replaceAll(" ");
 		}
 
-		return replacement;
+		return inputString;
 	}
 
 	/**
@@ -387,7 +423,7 @@ public class AnnotationDrivenDoclet {
 	 * @throws MissingCommandLineParameterException
 	 *             thrown if a parameter is missing.
 	 */
-	protected static void processOptions(final String[][] options)
+	static void processOptions(final String[][] options)
 			throws UnsupportedCommandLineParameterException,
 			MissingCommandLineParameterException {
 		for (final String[] strings : options) {
@@ -424,7 +460,12 @@ public class AnnotationDrivenDoclet {
 
 	/**
 	 * @param strings
+	 *            the provided parameters as string array.
+	 * @param expected
+	 *            the number of expected parameter values
 	 * @throws UnsupportedCommandLineParameterException
+	 *             if the number of provided parameters do not match the given
+	 *             parameters.
 	 */
 	private static void validateNumberOfParameters(final String[] strings,
 			final int expected) throws UnsupportedCommandLineParameterException {
@@ -437,16 +478,22 @@ public class AnnotationDrivenDoclet {
 
 	/**
 	 * @param classDoc
+	 *            the classDoc to evaluate the destination path from.
 	 * @return the path where to save the generated files.
 	 */
 	private static String evaluatePath(final ClassDoc classDoc) {
+		// FIXME: windows paths.
 		return baseOutputDir
 				+ classDoc.containingPackage().name().replaceAll("\\.", "/");
 
 	}
 
 	/**
+	 * This method is required from the {@link Doclet} to enable commandline
+	 * parameter.
+	 * 
 	 * @param option
+	 *            the provided commandline parameter option.
 	 * @return the number of parameters.
 	 */
 	public static int optionLength(final String option) {

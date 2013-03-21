@@ -1,6 +1,3 @@
-/**
- * 
- */
 package ch.puzzle.util;
 
 /**
@@ -9,16 +6,15 @@ package ch.puzzle.util;
  */
 public class UnsupportedCommandLineParameterException extends Exception {
 
-	/**
-	 * @param string
-	 */
-	public UnsupportedCommandLineParameterException(final String string) {
-		super(string);
-	}
+	/** */
+	private static final long serialVersionUID = -8693071757333532305L;
 
 	/**
-	 * 
+	 * @param message
+	 *            the exception message
 	 */
-	private static final long serialVersionUID = -8693071757333532305L;
+	public UnsupportedCommandLineParameterException(final String message) {
+		super(message);
+	}
 
 }

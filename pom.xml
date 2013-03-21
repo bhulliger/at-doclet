@@ -4,7 +4,7 @@
 
 	<groupId>ch.puzzle</groupId>
 	<artifactId>at-doclet</artifactId>
-	<version>1.0</version>
+	<version>0.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>at-doclet</name>
@@ -34,9 +34,9 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
 		<version.java>1.7</version.java>
 		<version.junit>4.11</version.junit>
-		<version.lombok>0.11.4</version.lombok>
 		<version.log4j>1.2.17</version.log4j>
 		<version.maven-plugin-tools-javadoc>3.2</version.maven-plugin-tools-javadoc>
 		<version.reflections-maven>0.9.8</version.reflections-maven>
@@ -60,27 +60,12 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>${version.lombok}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections-maven</artifactId>
-			<version>${version.reflections-maven}</version>
-			<type>maven-plugin</type>
-		</dependency>
-
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${version.log4j}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>${version.mockito-core}</version>
+			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 
