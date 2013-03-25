@@ -3,6 +3,8 @@ package ch.puzzle.selenium;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -19,7 +21,10 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import ch.puzzle.annotations.TestCase;
+import ch.puzzle.doc.reports.ReportWatcher;
 import ch.puzzle.doc.reports.TestResultSaver;
+import ch.puzzle.doc.screencasts.ScreencastWatcher;
+import ch.puzzle.doc.screenshots.ScreenshotWatcher;
 import ch.puzzle.selenium.screenshots.ScreenshotDriver;
 import ch.puzzle.util.DocletPropertyUtils;
 
@@ -47,8 +52,22 @@ public abstract class BaseSeleniumTest {
 			BaseSeleniumTest.currentTestCase = description.getAnnotation(TestCase.class);
 			super.starting(description);
 		}
-
 	};
+
+	@Rule
+	public ReportWatcher reportWatcher = new ReportWatcher() {
+
+		@Override
+		public String getCurrentReleaseBuild() {
+			return new SimpleDateFormat("dd.MM.yyyy").format(new Date());
+		}
+	};
+
+	@Rule
+	public ScreenshotWatcher screenshotWatcher = new ScreenshotWatcher();
+
+	@Rule
+	public ScreencastWatcher screencastWatcher = new ScreencastWatcher();
 
 	/**
 	 * close all drivers and windows after the test class has finished.
@@ -67,7 +86,7 @@ public abstract class BaseSeleniumTest {
 	 */
 	@AfterClass
 	public static void updateReports() {
-		if ("on".equals(getPropertyValue("reports"))) {
+		if ("on".equals(DocletPropertyUtils.getPropertyValue("reports"))) {
 			TestResultSaver.getInstance().updateAndSaveTestReport();
 		}
 	}
@@ -90,7 +109,7 @@ public abstract class BaseSeleniumTest {
 	protected static WebDriver initDriver() {
 		WebDriver driver = null;
 
-		if ("on".equals(getPropertyValue("screenshots"))) {
+		if ("on".equals(DocletPropertyUtils.getPropertyValue("screenshots"))) {
 			driver = new ScreenshotDriver();
 			return driver;
 		}
@@ -146,7 +165,7 @@ public abstract class BaseSeleniumTest {
 		if (seleniumProperties == null) {
 			seleniumProperties = new Properties();
 			try (final InputStream resourceAsStream = DocletPropertyUtils.class
-					.getResourceAsStream("/selenium.properties")) {
+					.getResourceAsStream("selenium.properties")) {
 				seleniumProperties.load(resourceAsStream);
 				resourceAsStream.close();
 			}
