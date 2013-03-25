@@ -127,7 +127,7 @@ public abstract class BaseSeleniumTest {
 		}
 
 		// headless firefox driver
-		if (getPropertyValue("driverClass").equals("org.openqa.selenium.chrome.ChromeDriver")) {
+		if ("org.openqa.selenium.chrome.ChromeDriver".equals(getPropertyValue("driverClass"))) {
 			final DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 			capabilities.setCapability("chrome.binary", getPropertyValue("chrome.binary"));
 			final String webdriverLocation = getPropertyValue("chrome.webdriver.binary");
@@ -165,7 +165,7 @@ public abstract class BaseSeleniumTest {
 		if (seleniumProperties == null) {
 			seleniumProperties = new Properties();
 			try (final InputStream resourceAsStream = DocletPropertyUtils.class
-					.getResourceAsStream("selenium.properties")) {
+					.getResourceAsStream("/selenium.properties")) {
 				seleniumProperties.load(resourceAsStream);
 				resourceAsStream.close();
 			}
