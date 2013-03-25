@@ -1,7 +1,7 @@
 /**
  * 
  */
-package ch.puzzle.util;
+package ch.puzzle.doclet.exceptions;
 
 /**
  * @author Brigitte Hulliger, <hulliger@puzzle.ch>

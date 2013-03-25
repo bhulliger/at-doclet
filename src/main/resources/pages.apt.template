@@ -1,0 +1,15 @@
+			------
+            ${id}
+            ------
+            ${author}
+            ------
+            ${since}
+
+
+${id} / ${name} 
+
+  (Autor: ${author}, Version: ${version}, Last Update: ${since})
+
+* Description
+  
+  ${documentation} 

@@ -1,4 +1,4 @@
-package ch.puzzle.util;
+package ch.puzzle.doclet;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,6 +18,14 @@ import java.util.regex.Pattern;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import org.apache.commons.io.FileUtils;
+
+import ch.puzzle.annotations.Page;
+import ch.puzzle.annotations.TestCase;
+import ch.puzzle.annotations.UseCase;
+import ch.puzzle.doclet.exceptions.MissingCommandLineParameterException;
+import ch.puzzle.doclet.exceptions.UnsupportedCommandLineParameterException;
+
 import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.AnnotationDesc.ElementValuePair;
 import com.sun.javadoc.ClassDoc;
@@ -36,8 +44,7 @@ public class AnnotationDrivenDoclet {
 	// .getLogger(AnnotationDrivenDoclet.class);
 
 	/** File formats that are supported for embedding videos in documentation. */
-	private static final String[] SUPPORTED_VIDEO_TYPES = { "ogg", "mp4",
-			"webm" };
+	private static final String[] SUPPORTED_VIDEO_TYPES = { "ogg", "mp4", "webm" };
 
 	/**
 	 * The base output directory where the apt-files are stored. The value is
@@ -63,10 +70,14 @@ public class AnnotationDrivenDoclet {
 	 * ${basedir}/src/site/apt/templates/pages.apt.template
 	 */
 	static Map<String, String> configuredAnnotations = new HashMap<>();
+	static {
+		configuredAnnotations.put(TestCase.class.getName(), "testcase.apt.template");
+		configuredAnnotations.put(UseCase.class.getName(), "usecase.apt.template");
+		configuredAnnotations.put(Page.class.getName(), "page.apt.template");
+	}
 
 	/** Regex pattern to find placeholders in template file. */
-	private static final Pattern KEY_DELIMITER = Pattern
-			.compile("\\$\\{\\w+\\}");
+	private static final Pattern KEY_DELIMITER = Pattern.compile("\\$\\{\\w+\\}");
 
 	/** Delimiter to find tables inside the template file. */
 	private static final String TABLE_START_DELIMITER = "~~{table}";
@@ -75,8 +86,7 @@ public class AnnotationDrivenDoclet {
 	private static final String TABLE_END_DELIMITER = "~~{/table}";
 
 	/** Regex pattern to find image placeholders inside the template file. */
-	private static final Pattern IMAGES_DELIMITER = Pattern
-			.compile("~~\\{images:(\\/*[\\w+\\$\\{\\}]\\/*)+\\}");
+	private static final Pattern IMAGES_DELIMITER = Pattern.compile("~~\\{images:(\\/*[\\w+\\$\\{\\}]\\/*)+\\}");
 
 	/** Regex pattern to find screencast placeholders inside the template file. */
 	private static final Pattern SCREENCAST_MATCHER = Pattern
@@ -91,23 +101,19 @@ public class AnnotationDrivenDoclet {
 	 * @throws MissingCommandLineParameterException
 	 * @throws FileNotFoundException
 	 */
-	public static boolean start(final RootDoc root)
-			throws UnsupportedCommandLineParameterException,
-			MissingCommandLineParameterException, FileNotFoundException,
-			IOException {
+	public static boolean start(final RootDoc root) throws UnsupportedCommandLineParameterException,
+			MissingCommandLineParameterException, FileNotFoundException, IOException {
 
 		/** process commandline-parameters and save them to class variables */
 		processOptions(root.options());
 
 		for (final ClassDoc classDoc : root.classes()) {
-			processAnnotations(classDoc.tags(), classDoc.annotations(),
-					evaluatePath(classDoc));
+			processAnnotations(classDoc.tags(), classDoc.annotations(), evaluatePath(classDoc));
 
 			final MethodDoc[] methods = classDoc.methods();
 			for (final MethodDoc methodDoc : methods) {
 
-				processAnnotations(methodDoc.tags(), methodDoc.annotations(),
-						evaluatePath(classDoc));
+				processAnnotations(methodDoc.tags(), methodDoc.annotations(), evaluatePath(classDoc));
 			}
 		}
 
@@ -124,13 +130,11 @@ public class AnnotationDrivenDoclet {
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 */
-	static void processAnnotations(final Tag[] tags,
-			final AnnotationDesc[] annotations, final String destinationFolder)
+	static void processAnnotations(final Tag[] tags, final AnnotationDesc[] annotations, final String destinationFolder)
 			throws IOException, FileNotFoundException {
 		for (final AnnotationDesc annotationDesc : annotations) {
 
-			final String qualifiedAnnotationName = annotationDesc
-					.annotationType().qualifiedName();
+			final String qualifiedAnnotationName = annotationDesc.annotationType().qualifiedName();
 
 			if (!configuredAnnotations.containsKey(qualifiedAnnotationName)) {
 				continue;
@@ -140,8 +144,7 @@ public class AnnotationDrivenDoclet {
 
 			for (final Tag tag : tags) {
 				String text = tag.text();
-				final Matcher matcher = Pattern.compile("\n\\s*\n\\s+")
-						.matcher(text);
+				final Matcher matcher = Pattern.compile("\n\\s*\n\\s+").matcher(text);
 				if (matcher.find()) {
 					text = matcher.replaceAll("\n\n  ");
 				}
@@ -153,34 +156,42 @@ public class AnnotationDrivenDoclet {
 				file.mkdirs();
 			}
 
-			for (final ElementValuePair annotationElement : annotationDesc
-					.elementValues()) {
+			for (final ElementValuePair annotationElement : annotationDesc.elementValues()) {
 				final String key = annotationElement.element().name();
-				final String value = annotationElement.value().toString()
-						.replaceAll("\"", "");
+				final String value = annotationElement.value().toString().replaceAll("\"", "");
 				replacements.put(key, value);
 			}
 
-			final String templatePath = configuredAnnotations
-					.get(qualifiedAnnotationName);
-			try (final BufferedReader reader = new BufferedReader(
-					new FileReader(templatePath));
+			final String templatePath = configuredAnnotations.get(qualifiedAnnotationName);
+			final String destinationFile = destinationFolder + "/" + replacements.get("id") + ".apt";
+			try (final BufferedReader reader = new BufferedReader(new FileReader(templatePath));
 
-					final PrintWriter writer = new PrintWriter(new FileWriter(
-							destinationFolder + "/" + replacements.get("id")
-									+ ".apt"))) {
+			final PrintWriter writer = new PrintWriter(new FileWriter(destinationFile))) {
 
 				boolean insideTable = false;
 				String line = null;
 				while ((line = reader.readLine()) != null) {
 					if (line.contains(TABLE_START_DELIMITER)) {
 						insideTable = true;
-					} else if (line.contains(TABLE_END_DELIMITER)) {
+					}
+					else if (line.contains(TABLE_END_DELIMITER)) {
 						insideTable = false;
 					}
 					line = processLine(line, insideTable, replacements);
 					writer.println(line);
 				}
+			}
+			catch (final FileNotFoundException e) {
+				final StringBuilder sb = new StringBuilder();
+				sb.append(replacements.get("id"));
+
+				for (final Tag tag : tags) {
+					sb.append("\n\n* ").append(tag.name());
+					sb.append("\n\n  ").append(tag.text());
+				}
+
+				FileUtils.writeStringToFile(new File(destinationFile), sb.toString());
+
 			}
 		}
 	}
@@ -195,8 +206,7 @@ public class AnnotationDrivenDoclet {
 	 *            map with the replacement keys found in javadoc.
 	 * @return the processed line with all replacements done.
 	 */
-	static String processLine(final String line, final boolean insideTable,
-			final Map<String, String> replacements) {
+	static String processLine(final String line, final boolean insideTable, final Map<String, String> replacements) {
 		String toPrint = line;
 
 		// process screencast tags
@@ -215,11 +225,9 @@ public class AnnotationDrivenDoclet {
 		final Matcher matcher = KEY_DELIMITER.matcher(line);
 		while (matcher.find()) {
 			final String placeholder = matcher.group();
-			final Matcher keyMatcher = Pattern.compile("\\w+").matcher(
-					placeholder);
+			final Matcher keyMatcher = Pattern.compile("\\w+").matcher(placeholder);
 			final String key = keyMatcher.find() ? keyMatcher.group() : "";
-			String replacement = replacements.containsKey(key) ? replacements
-					.get(key) : "";
+			String replacement = replacements.containsKey(key) ? replacements.get(key) : "";
 
 			// TODO: replace javadoc links
 
@@ -242,8 +250,7 @@ public class AnnotationDrivenDoclet {
 	 *            the replacement parameters from the javadoc
 	 * @return the replacement string for the screencasts
 	 */
-	static String processScreencast(final String line,
-			final Map<String, String> replacements) {
+	static String processScreencast(final String line, final Map<String, String> replacements) {
 		// 1. replace placeholders
 		final Matcher matcher = KEY_DELIMITER.matcher(line);
 
@@ -253,8 +260,7 @@ public class AnnotationDrivenDoclet {
 
 		while (matcher.find()) {
 			final String placeholder = matcher.group();
-			final Matcher keyMatcher = Pattern.compile("\\w+").matcher(
-					placeholder);
+			final Matcher keyMatcher = Pattern.compile("\\w+").matcher(placeholder);
 			final String key = keyMatcher.find() ? keyMatcher.group() : "";
 			fileIdentifier = replacements.get(key);
 		}
@@ -262,8 +268,7 @@ public class AnnotationDrivenDoclet {
 		// check if screencast is available
 		boolean screencastExists = false;
 		for (final String supportedVideoType : SUPPORTED_VIDEO_TYPES) {
-			if (new File(resourcesDir + "screencasts/" + fileIdentifier + "."
-					+ supportedVideoType).exists()) {
+			if (new File(resourcesDir + "screencasts/" + fileIdentifier + "." + supportedVideoType).exists()) {
 				screencastExists = true;
 				break;
 			}
@@ -276,18 +281,15 @@ public class AnnotationDrivenDoclet {
 			snippet.append("<video width=\"800\" controls>");
 
 			for (final String supportedVideoFormat : SUPPORTED_VIDEO_TYPES) {
-				snippet.append("<source src=\"/screencasts/")
-						.append(fileIdentifier).append(".")
-						.append(supportedVideoFormat)
-						.append("\" type=\"video/")
-						.append(supportedVideoFormat).append("\">");
+				snippet.append("<source src=\"/screencasts/").append(fileIdentifier).append(".")
+						.append(supportedVideoFormat).append("\" type=\"video/").append(supportedVideoFormat)
+						.append("\">");
 			}
 
 			snippet.append("Your Browser does not support the video tag.");
 			snippet.append("</video>");
 
-			final String snippetFileName = resourcesDir
-					+ "generated/snippets/screencast_snippet_" + fileIdentifier
+			final String snippetFileName = resourcesDir + "generated/snippets/screencast_snippet_" + fileIdentifier
 					+ ".txt";
 			final File snippetFile = new File(snippetFileName);
 
@@ -297,19 +299,19 @@ public class AnnotationDrivenDoclet {
 					snippetFile.createNewFile();
 				}
 
-				try (final BufferedWriter bw = new BufferedWriter(
-						new FileWriter(snippetFile.getAbsolutePath()))) {
+				try (final BufferedWriter bw = new BufferedWriter(new FileWriter(snippetFile.getAbsolutePath()))) {
 					bw.write(snippet.toString());
 				}
-			} catch (final IOException e) {
+			}
+			catch (final IOException e) {
 				e.printStackTrace();
 				// FIXME
 				// LOG.error(e);
 			}
 
-			toPrint.append("\n\n%{snippet|verbatim=false|file="
-					+ snippetFileName + "}");
-		} else {
+			toPrint.append("\n\n%{snippet|verbatim=false|file=" + snippetFileName + "}");
+		}
+		else {
 			toPrint.append("\n\n  n/a"); // Print "n/a" in apt file.
 		}
 		return toPrint.toString();
@@ -322,8 +324,7 @@ public class AnnotationDrivenDoclet {
 	 *            the replacement parameters from the javadoc
 	 * @return the replacement string for the images
 	 */
-	static String processImages(final String line,
-			final Map<String, String> replacements) {
+	static String processImages(final String line, final Map<String, String> replacements) {
 
 		// 1. replace placeholders
 		String toPrint = line;
@@ -332,16 +333,13 @@ public class AnnotationDrivenDoclet {
 
 		while (matcher.find()) {
 			final String placeholder = matcher.group();
-			final Matcher keyMatcher = Pattern.compile("\\w+").matcher(
-					placeholder);
+			final Matcher keyMatcher = Pattern.compile("\\w+").matcher(placeholder);
 			final String key = keyMatcher.find() ? keyMatcher.group() : "";
-			final String replacement = replacements.containsKey(key) ? replacements
-					.get(key) : "";
+			final String replacement = replacements.containsKey(key) ? replacements.get(key) : "";
 
 			toPrint = toPrint.replace(placeholder, replacement);
 		}
-		final Matcher pathMatcher = Pattern.compile(
-				":(\\/*[\\w\\-\\_\\s]+\\/*)+").matcher(toPrint);
+		final Matcher pathMatcher = Pattern.compile(":(\\/*[\\w\\-\\_\\s]+\\/*)+").matcher(toPrint);
 		String directoryPath = "";
 		if (pathMatcher.find()) {
 			directoryPath = pathMatcher.group();
@@ -362,21 +360,17 @@ public class AnnotationDrivenDoclet {
 				final MimetypesFileTypeMap mimetypesFileTypeMap = new MimetypesFileTypeMap();
 				mimetypesFileTypeMap.addMimeTypes("image png tif jpg jpeg bmp");
 
-				final String type = mimetypesFileTypeMap.getContentType(file)
-						.split("/")[0];
+				final String type = mimetypesFileTypeMap.getContentType(file).split("/")[0];
 
 				if ("image".equals(type)) {
-					sb.append("\n\n[")
-							.append(file.getPath().replace(resourcesDir, "/"))
-							.append("]");
-				} else {
+					sb.append("\n\n[").append(file.getPath().replace(resourcesDir, "/")).append("]");
+				}
+				else {
 
 					// LOG.debug(file.getName() +
 					// " has an unsupported filetype ["
 					// + type + "]. skipping.");
-					System.out.println(file.getName()
-							+ " has an unsupported filetype [" + type
-							+ "]. skipping.");
+					System.out.println(file.getName() + " has an unsupported filetype [" + type + "]. skipping.");
 				}
 			}
 		}
@@ -403,8 +397,7 @@ public class AnnotationDrivenDoclet {
 	 * @return the formatted string usable in table cells of the apt-format
 	 */
 	private static String formatTextForTableCell(final String inputString) {
-		final Matcher matcher = Pattern.compile("\\s+|\t|\n").matcher(
-				inputString);
+		final Matcher matcher = Pattern.compile("\\s+|\t|\n").matcher(inputString);
 
 		if (matcher.find()) {
 			return matcher.replaceAll(" ");
@@ -423,33 +416,31 @@ public class AnnotationDrivenDoclet {
 	 * @throws MissingCommandLineParameterException
 	 *             thrown if a parameter is missing.
 	 */
-	static void processOptions(final String[][] options)
-			throws UnsupportedCommandLineParameterException,
+	static void processOptions(final String[][] options) throws UnsupportedCommandLineParameterException,
 			MissingCommandLineParameterException {
 		for (final String[] strings : options) {
 			final String tag = strings[0];
 			switch (tag) {
-			case "-output":
-				validateNumberOfParameters(strings, 1);
-				baseOutputDir = strings[1];
-				break;
-			case "-annotation":
-				validateNumberOfParameters(strings, 2);
-				configuredAnnotations.put(strings[1], strings[2]);
-				break;
-			case "-siteResources":
-				validateNumberOfParameters(strings, 1);
-				resourcesDir = strings[1];
-				break;
-			default:
-				break;
+				case "-output":
+					validateNumberOfParameters(strings, 1);
+					baseOutputDir = strings[1];
+					break;
+				case "-annotation":
+					validateNumberOfParameters(strings, 2);
+					configuredAnnotations.put(strings[1], strings[2]);
+					break;
+				case "-siteResources":
+					validateNumberOfParameters(strings, 1);
+					resourcesDir = strings[1];
+					break;
+				default:
+					break;
 			}
 		}
 
 		// validate if all parameters were provided
 		if (baseOutputDir == null) {
-			throw new MissingCommandLineParameterException(
-					"-output parameter is required but not provided.");
+			throw new MissingCommandLineParameterException("-output parameter is required but not provided.");
 		}
 		if (configuredAnnotations.isEmpty()) {
 			throw new MissingCommandLineParameterException(
@@ -467,12 +458,12 @@ public class AnnotationDrivenDoclet {
 	 *             if the number of provided parameters do not match the given
 	 *             parameters.
 	 */
-	private static void validateNumberOfParameters(final String[] strings,
-			final int expected) throws UnsupportedCommandLineParameterException {
+	private static void validateNumberOfParameters(final String[] strings, final int expected)
+			throws UnsupportedCommandLineParameterException {
 		if (strings.length != expected + 1) {
 			throw new UnsupportedCommandLineParameterException(
-					"invalid number of arguments provided for output option. allowed is 1 parameter. found "
-							+ expected + ".");
+					"invalid number of arguments provided for output option. allowed is 1 parameter. found " + expected
+							+ ".");
 		}
 	}
 
@@ -483,8 +474,7 @@ public class AnnotationDrivenDoclet {
 	 */
 	private static String evaluatePath(final ClassDoc classDoc) {
 		// FIXME: windows paths.
-		return baseOutputDir
-				+ classDoc.containingPackage().name().replaceAll("\\.", "/");
+		return baseOutputDir + classDoc.containingPackage().name().replaceAll("\\.", "/");
 
 	}
 

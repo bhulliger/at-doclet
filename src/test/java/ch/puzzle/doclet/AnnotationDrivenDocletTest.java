@@ -1,4 +1,4 @@
-package ch.puzzle.util;
+package ch.puzzle.doclet;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +8,10 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import ch.puzzle.doclet.AnnotationDrivenDoclet;
+import ch.puzzle.doclet.exceptions.MissingCommandLineParameterException;
+import ch.puzzle.doclet.exceptions.UnsupportedCommandLineParameterException;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.RootDoc;
@@ -29,7 +33,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#start(com.sun.javadoc.RootDoc)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#start(com.sun.javadoc.RootDoc)}
 	 * .
 	 */
 	@Test
@@ -57,7 +61,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#processAnnotations(com.sun.javadoc.Tag[], com.sun.javadoc.AnnotationDesc[], java.lang.String)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#processAnnotations(com.sun.javadoc.Tag[], com.sun.javadoc.AnnotationDesc[], java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -90,7 +94,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#processScreencast(java.lang.String, java.util.Map)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#processScreencast(java.lang.String, java.util.Map)}
 	 * .
 	 */
 	@Test
@@ -113,7 +117,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#processScreencast(java.lang.String, java.util.Map)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#processScreencast(java.lang.String, java.util.Map)}
 	 * .
 	 */
 	@Test
@@ -134,7 +138,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#processImages(java.lang.String, java.util.Map)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#processImages(java.lang.String, java.util.Map)}
 	 * .
 	 */
 	@Test
@@ -152,7 +156,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#processImages(java.lang.String, java.util.Map)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#processImages(java.lang.String, java.util.Map)}
 	 * .
 	 */
 	@Test
@@ -173,7 +177,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#processImages(java.lang.String, java.util.Map)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#processImages(java.lang.String, java.util.Map)}
 	 * .
 	 */
 	@Test
@@ -194,7 +198,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#processImages(java.lang.String, java.util.Map)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#processImages(java.lang.String, java.util.Map)}
 	 * .
 	 */
 	@Test
@@ -215,7 +219,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#optionLength(java.lang.String)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#optionLength(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -231,7 +235,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#optionLength(java.lang.String)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#optionLength(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -248,7 +252,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#optionLength(java.lang.String)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#optionLength(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -265,7 +269,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#optionLength(java.lang.String)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#optionLength(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -282,7 +286,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#optionLength(java.lang.String)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#optionLength(java.lang.String)}
 	 * .
 	 */
 	@Test(expected = UnsupportedCommandLineParameterException.class)
@@ -301,7 +305,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#optionLength(java.lang.String)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#optionLength(java.lang.String)}
 	 * .
 	 */
 	@Test(expected = UnsupportedCommandLineParameterException.class)
@@ -319,7 +323,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#optionLength(java.lang.String)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#optionLength(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -338,7 +342,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#optionLength(java.lang.String)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#optionLength(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -359,7 +363,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#optionLength(java.lang.String)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#optionLength(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -380,7 +384,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#optionLength(java.lang.String)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#optionLength(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -409,7 +413,7 @@ public class AnnotationDrivenDocletTest {
 
 	/**
 	 * Test method for
-	 * {@link ch.puzzle.util.AnnotationDrivenDoclet#optionLength(java.lang.String)}
+	 * {@link ch.puzzle.doclet.AnnotationDrivenDoclet#optionLength(java.lang.String)}
 	 * .
 	 */
 	@Test(expected = MissingCommandLineParameterException.class)
