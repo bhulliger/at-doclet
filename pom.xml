@@ -35,6 +35,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+		<github.maven.repository>tbd</github.maven.repository>
+
 		<version.java>1.7</version.java>
 		<version.log4j>1.2.17</version.log4j>
 		<version.selenium-java>2.31.0</version.selenium-java>
@@ -102,8 +104,6 @@
 			<groupId>org.monte</groupId>
 			<artifactId>monte</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>/home/bhulliger/Documents/dev/bhu_sandbox/at-doclet/lib/MonteScreenRecorder.jar</systemPath>
 		</dependency>
 	</dependencies>
 
@@ -159,5 +159,21 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>maven-repository</id>
+			<url>${github.maven.repository}</url>
+		</repository>
+	</distributionManagement>
+
+	<repositories>
+		<!--other repositories if any -->
+		<repository>
+			<id>project.local</id>
+			<name>project</name>
+			<url>file:${project.basedir}/repo</url>
+		</repository>
+	</repositories>
 
 </project>
