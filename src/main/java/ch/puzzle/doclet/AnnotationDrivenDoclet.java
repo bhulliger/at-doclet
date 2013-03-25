@@ -163,10 +163,10 @@ public class AnnotationDrivenDoclet {
 			}
 
 			final String templatePath = configuredAnnotations.get(qualifiedAnnotationName);
-			final String destinationFile = destinationFolder + "/" + replacements.get("id") + ".apt";
+			final String destinationFilePath = destinationFolder + "/" + replacements.get("id") + ".apt";
 			try (final BufferedReader reader = new BufferedReader(new FileReader(templatePath));
 
-			final PrintWriter writer = new PrintWriter(new FileWriter(destinationFile))) {
+			final PrintWriter writer = new PrintWriter(new FileWriter(destinationFilePath))) {
 
 				boolean insideTable = false;
 				String line = null;
@@ -190,7 +190,11 @@ public class AnnotationDrivenDoclet {
 					sb.append("\n\n  ").append(tag.text());
 				}
 
-				FileUtils.writeStringToFile(new File(destinationFile), sb.toString());
+				File destinationFile = new File(destinationFilePath);
+				if (!destinationFile.exists()) {
+					destinationFile.createNewFile();
+				}
+				FileUtils.writeStringToFile(destinationFile, sb.toString());
 
 			}
 		}
