@@ -35,8 +35,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<github.maven.repository>tbd</github.maven.repository>
-
 		<version.java>1.7</version.java>
 		<version.log4j>1.2.17</version.log4j>
 		<version.selenium-java>2.31.0</version.selenium-java>
@@ -160,19 +158,13 @@
 		</plugins>
 	</build>
 
-	<distributionManagement>
-		<repository>
-			<id>maven-repository</id>
-			<url>${github.maven.repository}</url>
-		</repository>
-	</distributionManagement>
-
 	<repositories>
 		<!--other repositories if any -->
+		
 		<repository>
-			<id>project.local</id>
-			<name>project</name>
-			<url>file:${project.basedir}/repo</url>
+			<id>puzzle.public</id>
+			<name>puzzle</name>
+			<url>https://maven.puzzle.ch/public</url>
 		</repository>
 	</repositories>
 
