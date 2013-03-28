@@ -9,7 +9,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import ch.puzzle.doclet.AnnotationDrivenDoclet;
 import ch.puzzle.doclet.exceptions.MissingCommandLineParameterException;
 import ch.puzzle.doclet.exceptions.UnsupportedCommandLineParameterException;
 

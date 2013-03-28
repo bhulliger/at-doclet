@@ -17,11 +17,6 @@ import java.lang.annotation.Target;
 public @interface TestCase {
 
 	/**
-	 * id of the testcase. used for identification in reports
-	 */
-	String id();
-
-	/**
 	 * corresponding UseCase class.
 	 */
 	Class<?> useCase();

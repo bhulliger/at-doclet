@@ -7,8 +7,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.rules.TestWatcher;
@@ -35,7 +36,7 @@ import ch.puzzle.util.DocletPropertyUtils;
 public abstract class BaseSeleniumTest {
 
 	/** Log4J Logger. */
-	private static final Logger LOG = Logger.getLogger(BaseSeleniumTest.class);
+	private static final Logger LOG = Logger.getAnonymousLogger();
 
 	/** static driver instance. */
 	private static WebDriver driverInstance;
@@ -49,7 +50,8 @@ public abstract class BaseSeleniumTest {
 
 		@Override
 		protected void starting(final Description description) {
-			BaseSeleniumTest.currentTestCase = description.getAnnotation(TestCase.class);
+			BaseSeleniumTest.currentTestCase = description
+					.getAnnotation(TestCase.class);
 			super.starting(description);
 		}
 	};
@@ -117,7 +119,8 @@ public abstract class BaseSeleniumTest {
 		if ("on".equals(getPropertyValue("headless"))) {
 
 			final String xPort = System.getProperty("limportal.xvfb.id", ":99");
-			final File firefoxPath = new File(System.getProperty("limportal.deploy.firefox.path", "/usr/bin/firefox"));
+			final File firefoxPath = new File(System.getProperty(
+					"limportal.deploy.firefox.path", "/usr/bin/firefox"));
 			final FirefoxBinary firefoxBinary = new FirefoxBinary(firefoxPath);
 			firefoxBinary.setEnvironmentProperty("DISPLAY", xPort);
 
@@ -127,23 +130,26 @@ public abstract class BaseSeleniumTest {
 		}
 
 		// headless firefox driver
-		if ("org.openqa.selenium.chrome.ChromeDriver".equals(getPropertyValue("driverClass"))) {
-			final DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-			capabilities.setCapability("chrome.binary", getPropertyValue("chrome.binary"));
+		if ("org.openqa.selenium.chrome.ChromeDriver"
+				.equals(getPropertyValue("driverClass"))) {
+			final DesiredCapabilities capabilities = DesiredCapabilities
+					.chrome();
+			capabilities.setCapability("chrome.binary",
+					getPropertyValue("chrome.binary"));
 			final String webdriverLocation = getPropertyValue("chrome.webdriver.binary");
 			if (webdriverLocation != null) {
 				System.setProperty("webdriver.chrome.driver", webdriverLocation);
 			}
 			driver = new ChromeDriver(capabilities);
-		}
-		else {
+		} else {
 			try {
-				driver = (WebDriver) Class.forName(getPropertyValue("driverClass")).newInstance();
+				driver = (WebDriver) Class.forName(
+						getPropertyValue("driverClass")).newInstance();
 				driver.manage().window().maximize();
 				driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-			}
-			catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-				LOG.error(e);
+			} catch (ClassNotFoundException | InstantiationException
+					| IllegalAccessException e) {
+				LOG.log(Level.WARNING, "Cannot instantiate driver.", e);
 			}
 		}
 
@@ -168,9 +174,10 @@ public abstract class BaseSeleniumTest {
 					.getResourceAsStream("/selenium.properties")) {
 				seleniumProperties.load(resourceAsStream);
 				resourceAsStream.close();
-			}
-			catch (final IOException e) {
-				LOG.error("could not read property file [selenium.properties]", e);
+			} catch (final IOException e) {
+				LOG.log(Level.WARNING,
+						"cannot read properties. File [selenium.properties] does not exists.",
+						e);
 			}
 		}
 

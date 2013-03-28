@@ -5,9 +5,10 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.monte.media.Format;
@@ -27,7 +28,7 @@ import ch.puzzle.util.DocletPropertyUtils;
 public class ScreencastWatcher extends TestWatcher {
 
 	/** Log4j Logger. */
-	private static final Logger LOG = Logger.getLogger(ScreencastWatcher.class);
+	private static final Logger LOG = Logger.getAnonymousLogger();
 
 	/** Montemedia Screenrecorder to take screencast with. */
 	private ScreenRecorder screenRecorder;
@@ -73,10 +74,10 @@ public class ScreencastWatcher extends TestWatcher {
 
 			// Call the start method of ScreenRecorder to begin recording
 			this.screenRecorder.start();
-		} catch (IOException | AWTException e) {
-			LOG.error(e);
+		} catch (final IOException | AWTException e) {
+			LOG.log(Level.SEVERE,
+					"could not create screencast: [" + e.getMessage() + "].", e);
 		}
-
 		super.starting(description);
 	}
 
@@ -109,7 +110,7 @@ public class ScreencastWatcher extends TestWatcher {
 			}
 			FileUtils.moveFile(sourceFile, destinationFile);
 		} catch (final IOException e) {
-			LOG.error("could not move generated screencast.", e);
+			LOG.log(Level.SEVERE, "Could not write generated screencast.", e);
 			return;
 		}
 
@@ -121,8 +122,8 @@ public class ScreencastWatcher extends TestWatcher {
 							+ "/" + testcaseId + ".ogg");
 
 		} catch (final IOException e) {
-			LOG.warn(
-					"install ffmpeg if you want to include the screencast in your documentation as video.",
+			LOG.log(Level.WARNING,
+					"could not convert generated avi-file to supported video format. ffmpeg installation is missing. ",
 					e);
 		}
 

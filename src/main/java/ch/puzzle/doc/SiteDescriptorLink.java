@@ -51,7 +51,6 @@ public class SiteDescriptorLink {
 	 */
 	public SiteDescriptorLink(final Class<?> clazz, final String id,
 			final String linkName) {
-
 		this.clazz = clazz;
 		this.id = id;
 		this.linkName = linkName;

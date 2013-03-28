@@ -3,8 +3,8 @@ package ch.puzzle.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Brigitte Hulliger, <hulliger@puzzle.ch>
@@ -20,7 +20,7 @@ public final class DocletPropertyUtils {
 	}
 
 	/** Log4j Logger. */
-	private static final Logger LOG = Logger.getLogger(DocletPropertyUtils.class);
+	private static final Logger LOG = Logger.getAnonymousLogger();
 
 	/** Site-Generation-Properties to read from. */
 	private static Properties docletProperties;
@@ -46,9 +46,10 @@ public final class DocletPropertyUtils {
 				docletProperties = new Properties();
 				docletProperties.load(resourceAsStream);
 				resourceAsStream.close();
-			}
-			catch (final IOException e) {
-				DocletPropertyUtils.LOG.error("could not read property file [doclet.properties]", e);
+			} catch (final IOException e) {
+				LOG.log(Level.WARNING,
+						"cannot read properties. File [doclet.properties] does not exists.",
+						e);
 			}
 		}
 		return docletProperties;

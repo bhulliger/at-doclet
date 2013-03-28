@@ -4,7 +4,7 @@
 
 	<groupId>ch.puzzle</groupId>
 	<artifactId>at-doclet</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>at-doclet</name>
@@ -35,17 +35,17 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+		<!-- dependency versions -->
 		<version.java>1.7</version.java>
-		<version.log4j>1.2.17</version.log4j>
-		<version.selenium-java>2.31.0</version.selenium-java>
 		<version.junit>4.11</version.junit>
-		<version.maven-plugin-tools-javadoc>3.2</version.maven-plugin-tools-javadoc>
-		<version.mockito-core>1.9.5</version.mockito-core>
-		<version.maven-compiler-plugin>3.0</version.maven-compiler-plugin>
+		<version.mockito-all>1.9.5</version.mockito-all>
+		<version.selenium-java>2.31.0</version.selenium-java>
 		<version.opencsv>2.3</version.opencsv>
 
-		<version.aspectj>1.7.2</version.aspectj>
-		<version.aspectj-tools>1.7.2</version.aspectj-tools>
+		<!-- Plugin versions -->
+		<version.maven-compiler-plugin>3.0</version.maven-compiler-plugin>
+		<version.license-maven-plugin>1.4</version.license-maven-plugin>
+		<version.maven-plugin-tools-javadoc>3.2</version.maven-plugin-tools-javadoc>
 	</properties>
 
 	<dependencies>
@@ -57,39 +57,22 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>${version.mockito-all}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>
 			<artifactId>maven-plugin-tools-javadoc</artifactId>
 			<version>${version.maven-plugin-tools-javadoc}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>${version.mockito-core}</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
 			<version>${version.selenium-java}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${version.log4j}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjrt</artifactId>
-			<version>${version.aspectj}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjtools</artifactId>
-			<version>${version.aspectj-tools}</version>
 		</dependency>
 
 		<dependency>
@@ -103,29 +86,9 @@
 			<artifactId>monte</artifactId>
 			<version>1.0</version>
 		</dependency>
+
 	</dependencies>
 
-
-	<profiles>
-		<profile>
-			<id>default-tools.jar</id>
-			<activation>
-				<property>
-					<name>java.vendor</name>
-					<value>Sun Microsystems Inc.</value>
-				</property>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>com.sun</groupId>
-					<artifactId>tools</artifactId>
-					<version>${version.java}</version>
-					<scope>system</scope>
-					<systemPath>${java.home}/../lib/tools.jar</systemPath>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
 
 	<build>
 		<plugins>
@@ -142,7 +105,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>1.4</version>
+				<version>${version.license-maven-plugin}</version>
 				<configuration>
 					<licenseName>lgpl_v3</licenseName>
 				</configuration>
@@ -160,7 +123,7 @@
 
 	<repositories>
 		<!--other repositories if any -->
-		
+
 		<repository>
 			<id>puzzle.public</id>
 			<name>puzzle</name>

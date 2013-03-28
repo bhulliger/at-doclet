@@ -18,9 +18,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Page {
 
-	/**
-	 * @return Identifier of the page
-	 */
-	String id();
+	/** intentionally empty */
 
 }

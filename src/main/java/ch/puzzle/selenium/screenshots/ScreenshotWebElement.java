@@ -4,9 +4,12 @@ import static org.apache.commons.io.FileUtils.copyFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
@@ -15,17 +18,18 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import ch.puzzle.annotations.TestCase;
+import ch.puzzle.selenium.BaseSeleniumTest;
+import ch.puzzle.util.DocletPropertyUtils;
+
 /**
- * A wrapper around a Selenium {@link WebElement}. Used to take Screenshots. A
- * AOP Pointcut is added around certain actions (@see {@link ScreenshotAspect}).
+ * A wrapper around a Selenium {@link WebElement}. Used to take Screenshots.
  * 
  * @author Brigitte Hulliger, <hulliger@puzzle.ch>
  */
 public class ScreenshotWebElement implements WebElement {
 
-	/** Log4j Logger. */
-	private static final Logger LOG = Logger
-			.getLogger(ScreenshotWebElement.class);
+	private static final Logger LOG = Logger.getAnonymousLogger();
 
 	/** the selenium {@link WebElement} that get wrapped. */
 	private final WebElement element;
@@ -57,8 +61,31 @@ public class ScreenshotWebElement implements WebElement {
 			copyFile(srcFile, new File(destinationFile));
 
 		} catch (final IOException e) {
-			LOG.error("could not copy file. ", e);
+			LOG.log(Level.WARNING, "screenshot could not be saved to system.",
+					e);
 		}
+	}
+
+	/**
+	 * @param testCase
+	 * @return the path where to put the screenshot
+	 */
+	private String getFilePath() {
+		final TestCase testCase = BaseSeleniumTest.getCurrentTestCase();
+		final String screenshotDirectory = DocletPropertyUtils
+				.getPropertyValue("site.resources.output.screenshots");
+		final StringBuilder sb = new StringBuilder(screenshotDirectory);
+		if (testCase != null) {
+			sb.append(testCase.id()).append(File.separator);
+			sb.append(testCase.useCase().getSimpleName());
+			sb.append("_");
+			sb.append(testCase.id());
+			sb.append("-");
+		}
+		sb.append(new SimpleDateFormat("yyyyMMdd-HHmmss_S").format(new Date()));
+
+		sb.append(".png");
+		return sb.toString();
 	}
 
 	/**
@@ -69,7 +96,7 @@ public class ScreenshotWebElement implements WebElement {
 	@Override
 	public void click() {
 		this.element.click();
-
+		this.takeScreenshot(this.getFilePath());
 	}
 
 	/**
@@ -80,7 +107,7 @@ public class ScreenshotWebElement implements WebElement {
 	@Override
 	public void submit() {
 		this.element.submit();
-
+		this.takeScreenshot(this.getFilePath());
 	}
 
 	/**
